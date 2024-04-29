@@ -1,17 +1,16 @@
 import React from "react"
-import { useState, useEffect } from "react"
-import { Link, NavLink, Outlet, useParams } from "react-router-dom"
-import axios from "axios"
+import { Link, NavLink, Outlet, useLoaderData } from "react-router-dom"
 import { getImageUrl } from "../../utils/image-util"
+import { getHostCars } from "../../utils/api"
+import { requireAuth } from "../../utils/auth"
+
+export async function loader({params}){
+    await requireAuth()
+    return getHostCars(params.id)
+}
 
 function HostCarDetails() {
-    const [hostCarDetails, setHostCarDetails] = useState([])
-    const params = useParams()
-
-    useEffect(() => {
-    axios.get(`/api/host/cars/${params.id}`)
-    .then (res => setHostCarDetails(res.data.cars))
-    }, [])
+    const hostCarDetails = useLoaderData()
 
     const style = {
         fontWeight: "bold",
@@ -27,7 +26,7 @@ function HostCarDetails() {
                 to=".."
                 relative="path"
                 className="back-button"
-            >&larr; <span>Back to all vans</span></Link>
+            >&larr; <span>Back to all cars</span></Link>
             <div className="host-car-detail-layout-container">
                 <div className="host-car-detail">
                     <img src={getImageUrl(hostCarDetails.imageUrl)} />

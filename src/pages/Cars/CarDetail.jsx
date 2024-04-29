@@ -1,18 +1,15 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
-import { useParams, Link, useLocation } from 'react-router-dom'
+import React from 'react'
+import { Link, useLocation, useLoaderData } from 'react-router-dom'
 import { getImageUrl } from '../../utils/image-util'
+import { getCars } from '../../utils/api'
 
+export async function loader({params}){
+  return getCars(params.id)
+}
 
 function CarDetail() {
-    const [details, setDetails] = useState([])
-    const params = useParams()
+    const details = useLoaderData()
     const location = useLocation()
-
-  useEffect(() => {
-    axios.get(`/api/cars/${params.id}`)
-    .then (res => setDetails(res.data.cars))
-  }, [])
 
   const type = location.state && location.state.type || "all"
 
@@ -23,7 +20,6 @@ function CarDetail() {
           relative="path"
           className="back-button"
       >&larr; <span>Back to {type} cars</span></Link>
-        {details ? (
             <div className="car-detail">
               <div className="car-detail-image">
                 <img src={getImageUrl(details.imageUrl)} alt={details.name}/>
@@ -36,7 +32,6 @@ function CarDetail() {
                 <button className="cardetails-link-button">Rent this car</button>
               </div>
             </div>
-        ) : <h2>Loading...</h2>}
     </div>
   )
 }

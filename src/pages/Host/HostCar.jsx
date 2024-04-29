@@ -1,11 +1,16 @@
 import React from "react"
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import axios from "axios"
+import { Link, useLoaderData } from "react-router-dom"
 import { getImageUrl } from "../../utils/image-util"
+import { getHostCars } from "../../utils/api"
+import { requireAuth } from "../../utils/auth"
+
+export async function loader(){
+    await requireAuth()
+    return getHostCars()
+}
 
 function HostCar() {
-    const[hostCars, setHostCars] = useState([])
+    const hostCars = useLoaderData() 
 
     const hostCarElements = hostCars.map( hostCar => (
         <Link
@@ -24,25 +29,13 @@ function HostCar() {
     ))
 
 
-    useEffect(() => {
-        axios.get('/api/host/cars')
-        .then (res => setHostCars(res.data.cars))
-    }, [])
-
     return (
         <section>
             <h1 className="host-cars-title">Your listed cars</h1>
             <div className="host-cars-list">
-                {
-                    hostCars.length > 0 ? (
-                        <section>
-                            {hostCarElements}
-                        </section>
-
-                    ) : (
-                            <h2>Loading...</h2>
-                        )
-                }
+                <section>
+                    {hostCarElements}
+                </section>
             </div>
         </section>
     )
