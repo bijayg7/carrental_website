@@ -4,8 +4,8 @@ import { getImageUrl } from "../../utils/image-util"
 import { getHostCars } from "../../utils/api"
 import { requireAuth } from "../../utils/auth"
 
-export async function loader(){
-    await requireAuth()
+export async function loader({request}){
+    await requireAuth(request)
     return getHostCars()
 }
 

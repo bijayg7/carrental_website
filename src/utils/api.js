@@ -21,3 +21,18 @@ export async function getHostCars(id) {
        console.log( error.message)
     }
 }
+
+export async function loginUser(creds) {
+    const response = await axios.post("/api/login", creds, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+      })
+    const data = response.data
+    if (data.error){
+        throw new Error("Incorrect username or password")
+    }
+    return data
+   
+}

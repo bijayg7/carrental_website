@@ -4,6 +4,7 @@ import { createServer, Model } from "miragejs"
 createServer({
     models: {
       cars: Model,
+      users: Model
     },
 
     seeds(server) {
@@ -13,11 +14,12 @@ createServer({
         server.create("car", { id: "4", name: "Tesla Model X", price: 150, description: "Tesla Model X is an all-electric SUV that offers impressive acceleration, ample seating for up to seven passengers, and distinctive falcon-wing doors for easy access. Known for its advanced autopilot capabilities and long-range battery options, it combines luxury, performance, and cutting-edge technology in one sleek package.", imageUrl: "tesla-modelx.jpg", type: "luxury", hostId: "333" })
         server.create("car", { id: "5", name: "Renault Captur", price: 100, description: "Renault Captur is a compact crossover SUV known for its stylish design and versatility, offering ample interior space and a range of efficient engine options. With its modern features and comfortable ride, the Captur is a popular choice for urban drivers seeking practicality and comfort.", imageUrl: "renault-captur.jpg", type: "SUV", hostId: "111" })
         server.create("car", { id: "6", name: "BMW Series 3", price: 130, description: "BMW 3 Series is a line of compact executive cars known for its sporty performance, luxurious features, and sleek design. Renowned for its precise handling and advanced technology, the 3 Series offers a balance of comfort and driving dynamics, making it a popular choice among enthusiasts and professionals alike.", imageUrl: "bmw.jpg", type: "luxury", hostId: "222" })
+        server.create("user", { id: "123", email: "bijaygautam7@gmail.com", password: "123456", name: "Bijay" })
     },
 
     routes() {
         
-        this.namespace = "api"
+      this.namespace = "api"
 
       this.get("/cars", (schema, request) => {
         return schema.cars.all()
@@ -36,6 +38,19 @@ createServer({
       this.get("/host/cars/:id", (schema, request) => {
         const id = request.params.id
         return schema.cars.findBy({id, hostId: "111"})
+      })
+
+      this.post("/login", (schema, request) => {
+        const { email, password } = JSON.parse(request.requestBody)
+        
+        const foundUser = schema.users.findBy({ email, password })
+        
+        if (foundUser) {
+          return { user: foundUser, token: 'Here is token' }; // Mocking a token for successful login
+        } else {
+          return { error: 'Invalid username or password' };
+        }
+
       })
 
     },
